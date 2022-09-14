@@ -7,6 +7,5 @@ CREATE TABLE users(
 
 
 CREATE TABLE token_blacklist(
-  id int primary key NOT NULL AUTO_INCREMENT,
-  token varchar(255) NOT NULL,
+  token varchar(255) primary key NOT NULL,
 )
