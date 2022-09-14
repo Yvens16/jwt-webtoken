@@ -9,6 +9,7 @@
     "sourceType": "module"
   },
   "rules": {
+    "no-trailing-spaces": [0, { "ignoreComments": true }],
     "no-console": "off",
     "no-restricted-syntax": [
       "error",
