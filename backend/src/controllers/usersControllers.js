@@ -6,6 +6,8 @@ const { createWebToken } = require("../middlewares/auth");
 
 // ARGON OPTIONS: https://github.com/ranisalt/node-argon2/wiki/Options
 
+
+
 const createUser = ({ name, email, hashPassword }) => {
   return sqlDB
     .query("INSERT INTO users (name, email, hashedPassword) values (?, ?,?)", [
@@ -46,6 +48,7 @@ const signUp = (req, res) => {
         res.status(400).json({ msg: "User not created", code: 400 });
       }
       const token = createWebToken(insertId);
+
       res.status(200).json({
         msg: "User created",
         code: 200,
