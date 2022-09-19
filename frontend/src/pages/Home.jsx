@@ -1,36 +1,84 @@
-import Counter from "@components/Counter";
-import logo from "@assets/logo.svg";
+import { useState } from "react";
 
 export default function Home() {
+  const [movies, setMovies] = useState([]);
+
+  const getMovies = () => {
+    const token = sessionStorage.getItem("token");
+    fetch("http://localhost:5001/movies", {
+      method: "GET",
+      headers: {
+        "Content-type": "application/json",
+        Authorization: `Bearer ${token}`, // notice the Bearer before your token
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.warn("data:", data);
+        setMovies(data);
+      })
+      .catch((error) => {
+        console.warn("error:", error);
+      });
+  };
+
+  const login = () => {
+    fetch("http://localhost:5001/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: "Yvens",
+        email: "yves@gmail.com",
+        password: "test",
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.warn(data.token);
+        sessionStorage.setItem("token", data.token);
+        return data;
+      })
+      .catch((error) => {
+        console.warn(error);
+      });
+  };
+
+  const logout = () => {
+    const token = sessionStorage.getItem("token");
+    fetch("http://localhost:5001/logout", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+        Authorization: `Bearer ${token}`, // notice the Bearer before your token
+      },
+    })
+      .then((response) => response.json())
+      .then((res) => {
+        console.warn(res);
+        return res;
+      })
+      .catch((error) => {
+        console.warn(error);
+      });
+  };
   return (
-    <header className="App-header">
-      <img src={logo} className="App-logo" alt="logo" />
-      <p>Hello Vite + React !</p>
-
-      <Counter />
-
-      <p>
-        Edit <code>App.jsx</code> and save to test HMR updates.
-      </p>
-      <p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-        {" | "}
-        <a
-          className="App-link"
-          href="https://vitejs.dev/guide/features.html"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Vite Docs
-        </a>
-      </p>
-    </header>
+    <div>
+      <button type="button" onClick={() => login()}>
+        Login
+      </button>
+      <button type="button" onClick={() => logout()}>
+        logout
+      </button>
+      <button type="button" onClick={() => getMovies()}>
+        Get movies
+      </button>
+      <div>
+        <h1>List of Movies</h1>
+        {movies.length &&
+          movies.map((movie) => <p key={movie.id}>{movie.name}</p>)}
+      </div>
+    </div>
   );
 }
