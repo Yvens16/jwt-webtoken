@@ -20,9 +20,11 @@ router.post("/logout", auth.blackListToken);
 // Authentification wall
 router.use(auth.verifyToken, auth.isTokenBlackListed);
 const movies = (req, res) => {
-  res.json({
-    name: "Godfather",
-  });
+  res.json([
+    {
+      name: "Godfather",
+    },
+  ]);
 };
 router.get("/movies", movies);
 module.exports = router;
