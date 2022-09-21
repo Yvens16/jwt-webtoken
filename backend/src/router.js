@@ -15,18 +15,19 @@ router.delete("/items/:id", itemControllers.destroy);
 router.post("/signup", auth.hashPassword, userControllers.signUp);
 router.post("/login", userControllers.login, auth.verifyPassword);
 router.get("/user", userControllers.getUserByEmail);
-router.post("/logout", auth.blackListToken);
+router.post("/logout", auth.blackListToken)
 
 // Authentification wall
 router.use(auth.verifyToken, auth.isTokenBlackListed);
-const movies = (req, res) => {
+const getMovies = (req, res) => {
   res.json([
     {
+      id: 0,
       name: "Godfather",
     },
   ]);
 };
-router.get("/movies", movies);
+router.get("/movies", getMovies);
 module.exports = router;
 
 /** *

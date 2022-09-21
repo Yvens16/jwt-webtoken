@@ -7,23 +7,19 @@ const { sqlDB } = require("../../db");
 const hashPassword = (req, res, next) => {
   argon2
     .hash(req.body.password)
-    .then((hashedPassword) => {
+    .then(hashedPassword => {
       req.body.hashedPassword = hashedPassword;
       delete req.body.password;
 
       next();
     })
-    .catch((err) => {
+    .catch(err => {
       console.error(err);
       res.sendStatus(500);
     });
 };
 
-// const verifyPassword = (req, res, next) => {
-//   const { password }
-// }
-
-const createWebToken = (userId) => {
+const createWebToken = userId => {
   const token = jwt.sign({ sub: userId }, process.env.JWT_SECRET, {
     expiresIn: "1h",
   });
@@ -33,7 +29,7 @@ const createWebToken = (userId) => {
 const verifyPassword = (req, res) => {
   const { password } = req.body;
   const { hashedPassword, id: userId } = req.user;
-  argon2.verify(hashedPassword, password).then((isVerified) => {
+  argon2.verify(hashedPassword, password).then(isVerified => {
     if (!isVerified) {
       res.sendStatus(401);
     }
@@ -66,23 +62,23 @@ const verifyToken = (req, res, next) => {
   }
 };
 
-const blackListToken = (req, res) => {
+const blackListToken = (req, res, next) => {
   const authorizationHeader = req.get("Authorization");
 
   if (authorizationHeader == null) {
     throw new Error("Authorization header is missing");
   }
 
+  // `Bearer ${token}`; ["Bearer", "fneufnkefbnke"]
+
   const [, token] = authorizationHeader.split(" ");
-  // the comma let us skip the first element of the array here type
-  // const [type, token] = authorizationHeader.split(" ");
   sqlDB
     .query("INSERT INTO  token_blacklist (token) VALUES(?)", [token])
     .then(([insertedToken]) => {
       console.warn("TOKEN ID", insertedToken.insertId);
       res.send({ msg: "USER LOGGED OUT" });
     })
-    .catch((err) => {
+    .catch(err => {
       console.warn("ERROR IN blackListToken", err);
       res.sendStatus(400);
     });
